@@ -46,9 +46,45 @@ st.markdown("""
     h3 { font-size: 1.8rem !important; }
     h4 { font-size: 1.5rem !important; }
     
-    /* Sidebar styling with dark green background */
+    /* Sidebar styling with seagrass background */
     [data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #1a4d2e 0%, #2d6a4f 100%) !important;
+        position: relative !important;
+        background: #1a4d2e !important;
+    }
+    
+    /* Sidebar background with image */
+    [data-testid="stSidebar"]::before {
+        content: "" !important;
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        background-image: url('https://raw.githubusercontent.com/guillemlcg/med_seagrass/main/img/menu_background.jpg') !important;
+        background-size: cover !important;
+        background-position: center !important;
+        background-repeat: no-repeat !important;
+        opacity: 0.15 !important;
+        filter: blur(2px) !important;
+        z-index: 0 !important;
+    }
+    
+    /* Overlay gradient on top of image */
+    [data-testid="stSidebar"]::after {
+        content: "" !important;
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        background: linear-gradient(180deg, rgba(26, 77, 46, 0.85) 0%, rgba(45, 106, 79, 0.85) 100%) !important;
+        z-index: 0 !important;
+    }
+    
+    /* Ensure sidebar content appears above background */
+    [data-testid="stSidebar"] > div {
+        position: relative !important;
+        z-index: 1 !important;
     }
     
     /* Sidebar text color and size */
