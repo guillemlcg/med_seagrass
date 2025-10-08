@@ -2,6 +2,14 @@
 
 A professional Streamlit dashboard for analyzing and visualizing Mediterranean seagrass distribution patterns using machine learning.
 
+## 🚀 Live Application
+
+**Access the interactive dashboard here:**
+
+[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://medseagrassdet.streamlit.app/)
+
+🔗 Direct link: [https://medseagrassdet.streamlit.app/](https://medseagrassdet.streamlit.app/)
+
 ## Overview
 
 This intelligence panel provides comprehensive analysis of seagrass presence detection in the Mediterranean Sea based on the methodology from:
