@@ -447,6 +447,7 @@ elif page == "📊 Variables & Statistics":
     variables.show(df)
 elif page == "🎯 Binary Classification":
     from page_modules import binary_classification
+    binary_classification.show(df)
 elif page == "🔢 Multi-Class Classification":
     from page_modules import multiclass_classification
     multiclass_classification.show(df)
