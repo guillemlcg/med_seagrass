@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-label="Mediterranean Seagrass Circular Logo">
+  <title>Mediterranean Seagrass Circular Logo</title>
+  <defs>
+    <!-- Sea gradient -->
+    <linearGradient id="seaGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0b6e88"/>
+      <stop offset="55%" stop-color="#1f9ab3"/>
+      <stop offset="100%" stop-color="#27b3c0"/>
+    </linearGradient>
+
+    <!-- Seagrass gradients -->
+    <linearGradient id="grassGrad1" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#95d5b2"/>
+      <stop offset="100%" stop-color="#1a4d2e"/>
+    </linearGradient>
+    <linearGradient id="grassGrad2" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#b7e4c7"/>
+      <stop offset="100%" stop-color="#2e8b57"/>
+    </linearGradient>
+
+    <!-- Soft shadow for depth -->
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#073b4c" flood-opacity="0.25"/>
+    </filter>
+
+    <!-- Circular clip -->
+    <clipPath id="circleClip">
+      <circle cx="256" cy="256" r="240"/>
+    </clipPath>
+  </defs>
+
+  <!-- Outer border (keeps logo crisp on dark backgrounds) -->
+  <circle cx="256" cy="256" r="248" fill="#ffffff"/>
+
+  <!-- Logo content clipped to a circle -->
+  <g clip-path="url(#circleClip)">
+    <!-- Sea background -->
+    <rect x="0" y="0" width="512" height="512" fill="url(#seaGrad)"/>
+
+    <!-- Light from above -->
+    <ellipse cx="256" cy="120" rx="300" ry="140" fill="#ffffff" opacity="0.08"/>
+
+    <!-- Waves (soft layered fills) -->
+    <path d="M -50 330 C 60 300, 180 360, 300 335 C 370 320, 440 345, 560 320 L 560 512 L -50 512 Z"
+          fill="#ffffff" opacity="0.14"/>
+    <path d="M -50 365 C 80 340, 200 380, 320 360 C 410 345, 480 370, 560 350 L 560 512 L -50 512 Z"
+          fill="#ffffff" opacity="0.10"/>
+    <path d="M -50 400 C 90 380, 220 410, 340 395 C 430 385, 500 400, 560 390 L 560 512 L -50 512 Z"
+          fill="#ffffff" opacity="0.08"/>
+
+    <!-- Seagrass (curved strokes) -->
+    <g filter="url(#softShadow)">
+      <!-- Left cluster -->
+      <path d="M 160 480 C 150 420, 170 360, 180 300 C 190 250, 180 220, 175 200" 
+            fill="none" stroke="url(#grassGrad1)" stroke-width="12" stroke-linecap="round"/>
+      <path d="M 185 482 C 185 430, 205 380, 200 330 C 195 290, 200 260, 210 235" 
+            fill="none" stroke="url(#grassGrad2)" stroke-width="10" stroke-linecap="round"/>
+      <path d="M 145 478 C 140 420, 130 360, 150 320 C 165 285, 170 260, 168 235" 
+            fill="none" stroke="url(#grassGrad2)" stroke-width="8" stroke-linecap="round"/>
+
+      <!-- Center cluster -->
+      <path d="M 255 485 C 250 420, 260 355, 270 300 C 280 250, 275 225, 272 205" 
+            fill="none" stroke="url(#grassGrad1)" stroke-width="13" stroke-linecap="round"/>
+      <path d="M 230 482 C 228 430, 238 380, 252 340 C 262 300, 260 270, 258 245" 
+            fill="none" stroke="url(#grassGrad2)" stroke-width="9" stroke-linecap="round"/>
+      <path d="M 278 480 C 285 420, 295 365, 305 330 C 315 295, 318 265, 320 245" 
+            fill="none" stroke="url(#grassGrad2)" stroke-width="11" stroke-linecap="round"/>
+
+      <!-- Right cluster -->
+      <path d="M 340 484 C 345 430, 350 375, 360 332 C 372 290, 378 260, 382 235" 
+            fill="none" stroke="url(#grassGrad1)" stroke-width="12" stroke-linecap="round"/>
+      <path d="M 318 482 C 320 440, 330 395, 336 360 C 342 320, 344 290, 345 265" 
+            fill="none" stroke="url(#grassGrad2)" stroke-width="8" stroke-linecap="round"/>
+      <path d="M 365 480 C 372 430, 388 370, 400 338 C 410 310, 415 285, 418 265" 
+            fill="none" stroke="url(#grassGrad2)" stroke-width="10" stroke-linecap="round"/>
+    </g>
+
+    <!-- Bubbles for underwater feel -->
+    <g opacity="0.25">
+      <circle cx="110" cy="230" r="6" fill="#e0fbfc"/>
+      <circle cx="135" cy="210" r="4" fill="#e0fbfc"/>
+      <circle cx="390" cy="220" r="5" fill="#e0fbfc"/>
+      <circle cx="365" cy="205" r="3" fill="#e0fbfc"/>
+      <circle cx="280" cy="190" r="3" fill="#e0fbfc"/>
+    </g>
+  </g>
+
+  <!-- White stroke ring on top -->
+  <circle cx="256" cy="256" r="240" fill="none" stroke="#ffffff" stroke-width="12"/>
+</svg>

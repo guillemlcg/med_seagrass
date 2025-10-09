@@ -10,11 +10,6 @@ Date: 2024
 
 import streamlit as st
 import pandas as pd
-import numpy as np
-import plotly.express as px
-import plotly.graph_objects as go
-from plotly.subplots import make_subplots
-import os
 from pathlib import Path
 import base64
 
@@ -274,47 +269,75 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Load data with caching
+# ==================== DATA LOADING ====================
 @st.cache_data
 def load_data():
-    """Load the seagrass dataset"""
-    # Get the absolute path to the data file
+    """Load the seagrass dataset with caching"""
     current_dir = Path(__file__).resolve().parent
     data_path = current_dir.parent / 'data' / 'pres_abs_merge_def.csv'
     
-    # Check if file exists
     if not data_path.exists():
         raise FileNotFoundError(f"Data file not found at: {data_path}")
     
-    df = pd.read_csv(data_path)
-    return df
+    return pd.read_csv(data_path)
 
-# Helper function to update Plotly figure fonts
-def update_figure_layout(fig):
-    """Apply consistent font sizes to Plotly figures"""
-    fig.update_layout(
-        font=dict(size=16),
-        title_font=dict(size=20),
-        legend=dict(font=dict(size=16)),
-        hoverlabel=dict(font_size=16)
-    )
-    fig.update_xaxes(title_font=dict(size=17), tickfont=dict(size=15))
-    fig.update_yaxes(title_font=dict(size=17), tickfont=dict(size=15))
-    return fig
 
-# Initialize data
+# ==================== HELPER FUNCTIONS ====================
+def encode_image_to_base64(image_path):
+    """Encode image to base64 string"""
+    with open(image_path, 'rb') as img_file:
+        return base64.b64encode(img_file.read()).decode()
+
+
+def create_styled_button_html(url, text, icon, is_download=False):
+    """Generate HTML for styled sidebar button"""
+    action = f"download='med_seagrass_data.csv'" if is_download else "target='_blank'"
+    href = f"data:text/csv;base64,{url}" if is_download else url
+    
+    return f"""
+    <div style='margin-top: 10px;'>
+        <a href='{href}' {action}>
+            <button style='width: 100%; padding: 0.5rem 1rem; 
+                           background-color: #52b788; color: white; 
+                           border: 2px solid #40916c; border-radius: 4px;
+                           font-weight: 500; cursor: pointer;
+                           transition: all 0.3s ease;'
+                    onmouseover="this.style.backgroundColor='#40916c'; this.style.borderColor='#2d6a4f'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 8px rgba(0,0,0,0.3)';"
+                    onmouseout="this.style.backgroundColor='#52b788'; this.style.borderColor='#40916c'; this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+                {icon} {text}
+            </button>
+        </a>
+    </div>
+    """
+
+# ==================== INITIALIZE DATA ====================
 try:
     df = load_data()
+except FileNotFoundError as e:
+    st.error(f"❌ Data file not found: {e}")
+    st.error("Please ensure 'data/pres_abs_merge_def.csv' exists in the project directory.")
+    st.stop()
 except Exception as e:
-    st.error(f"Error loading data: {e}")
-    st.error(f"Current working directory: {os.getcwd()}")
-    st.error(f"Script location: {Path(__file__).resolve().parent}")
+    st.error(f"❌ Error loading data: {e}")
     st.stop()
 
-# Sidebar title
-st.sidebar.markdown("""
+
+# ==================== SIDEBAR CONFIGURATION ====================
+# Sidebar title (with circular seagrass logo if available)
+logo_svg_path = Path(__file__).resolve().parent.parent / 'img' / 'logo_seagrass_circle.svg'
+logo_img_html = ""
+if logo_svg_path.exists():
+    svg_b64 = encode_image_to_base64(logo_svg_path)
+    logo_img_html = (
+        f"<img src='data:image/svg+xml;base64,{svg_b64}' alt='Seagrass Logo' "
+        "style='width:110px;height:110px;border-radius:50%;"
+        "box-shadow:0 2px 6px rgba(0,0,0,0.25);margin-bottom:10px;'/>"
+    )
+
+st.sidebar.markdown(f"""
 <div style='text-align: center; padding: 1.5rem 0.5rem; margin-bottom: 1rem;'>
-    <h1 style='color: #ffffff; font-size: 5rem; margin: 0; font-weight: 700; 
+    {logo_img_html}
+    <h1 style='color: #ffffff; font-size: 1.5rem; margin: 0.5rem 0 0 0; font-weight: 700; 
                text-shadow: 2px 2px 4px rgba(0,0,0,0.3); line-height: 1.3;'>
         Mediterranean Seagrass<br>Intelligence Panel
     </h1>
@@ -351,22 +374,18 @@ Published in *Ecological Informatics*
 # Article screenshot with link to DOI
 paper_img_path = Path(__file__).resolve().parent.parent / 'img' / 'paper_thumbnail.jpg'
 if paper_img_path.exists():
-    import base64
-    # Create a clickable image using HTML
-    with open(paper_img_path, 'rb') as img_file:
-        img_base64 = base64.b64encode(img_file.read()).decode()
+    img_base64 = encode_image_to_base64(paper_img_path)
     
-    st.sidebar.markdown("""
+    st.sidebar.markdown(f"""
     <div style='margin-top: 15px; margin-bottom: 10px;'>
         <a href='https://doi.org/10.1016/j.ecoinf.2018.09.004' target='_blank'>
-            <img src='data:image/jpeg;base64,{}' style='width: 100%; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); cursor: pointer; transition: transform 0.2s;' 
+            <img src='data:image/jpeg;base64,{img_base64}' 
+                 style='width: 100%; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+                        cursor: pointer; transition: transform 0.2s;' 
                  onmouseover="this.style.transform='scale(1.02)'" 
                  onmouseout="this.style.transform='scale(1)'"/>
         </a>
     </div>
-    """.format(img_base64), unsafe_allow_html=True)
-    
-    st.sidebar.markdown("""
     <div style='text-align: center; margin-top: 8px; margin-bottom: 15px;'>
         <a href='https://doi.org/10.1016/j.ecoinf.2018.09.004' target='_blank' 
            style='font-size: 0.85rem; color: #2E8B57; text-decoration: none; font-weight: 500;'>
@@ -380,65 +399,30 @@ st.sidebar.markdown("---")
 # Download dataframe button
 st.sidebar.markdown("### 💾 Download Data")
 
-# Create CSV download
 @st.cache_data
 def convert_df_to_csv(dataframe):
+    """Convert dataframe to CSV with caching"""
     return dataframe.to_csv(index=False).encode('utf-8')
 
-csv_data = convert_df_to_csv(df)
-
-# Use HTML/JavaScript to style the download button like the Original Data button
-csv_b64 = base64.b64encode(csv_data).decode()
-
-st.sidebar.markdown(f"""
-<div style='margin-top: 10px;'>
-    <a href='data:text/csv;base64,{csv_b64}' download='med_seagrass_data.csv'>
-        <button style='width: 100%; padding: 0.5rem 1rem; 
-                       background-color: #52b788; color: white; 
-                       border: 2px solid #40916c; border-radius: 4px;
-                       font-weight: 500; cursor: pointer;
-                       transition: all 0.3s ease;'
-                onmouseover="this.style.backgroundColor='#40916c'; this.style.borderColor='#2d6a4f'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 8px rgba(0,0,0,0.3)';"
-                onmouseout="this.style.backgroundColor='#52b788'; this.style.borderColor='#40916c'; this.style.transform='translateY(0)'; this.style.boxShadow='none';">
-            📥 Download Preprocessed Dataset (CSV)
-        </button>
-    </a>
-</div>
-""", unsafe_allow_html=True)
-
-st.sidebar.markdown("""
-<div style='text-align: center; margin-top: 5px; font-size: 0.75rem; color: #666;'>
-    <em>Preprocessed dataset by the developer</em>
-</div>
-""", unsafe_allow_html=True)
+csv_b64 = base64.b64encode(convert_df_to_csv(df)).decode()
+st.sidebar.markdown(
+    create_styled_button_html(csv_b64, "Download Preprocessed Dataset (CSV)", "📥", is_download=True) +
+    "<div style='text-align: center; margin-top: 5px; font-size: 0.75rem; color: #666;'>" +
+    "<em>Preprocessed dataset by the developer</em></div>",
+    unsafe_allow_html=True
+)
 
 # Link to original data on Mendeley
 st.sidebar.markdown("### 🔗 Original Data")
+st.sidebar.markdown(
+    create_styled_button_html('https://data.mendeley.com/datasets/8nmh5grxp8/1', 
+                             "Access Original Data (Mendeley)", "🔗") +
+    "<div style='text-align: center; margin-top: 5px; font-size: 0.75rem; color: #666;'>" +
+    "<em>Raw data repository</em></div>",
+    unsafe_allow_html=True
+)
 
-# Create a link button styled like the download button
-st.sidebar.markdown("""
-<div style='margin-top: 10px;'>
-    <a href='https://data.mendeley.com/datasets/8nmh5grxp8/1' target='_blank'>
-        <button style='width: 100%; padding: 0.5rem 1rem; 
-                       background-color: #52b788; color: white; 
-                       border: 2px solid #40916c; border-radius: 4px;
-                       font-weight: 500; cursor: pointer;
-                       transition: all 0.3s ease;'
-                onmouseover="this.style.backgroundColor='#40916c'; this.style.borderColor='#2d6a4f'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 8px rgba(0,0,0,0.3)';"
-                onmouseout="this.style.backgroundColor='#52b788'; this.style.borderColor='#40916c'; this.style.transform='translateY(0)'; this.style.boxShadow='none';">
-            🔗 Access Original Data (Mendeley)
-        </button>
-    </a>
-</div>
-""", unsafe_allow_html=True)
-
-st.sidebar.markdown("""
-<div style='text-align: center; margin-top: 5px; font-size: 0.75rem; color: #666;'>
-    <em>Raw data repository</em>
-</div>
-""", unsafe_allow_html=True)
-
-# Import page modules
+# ==================== PAGE ROUTING ====================
 if page == "🏠 Presentation":
     from page_modules import presentation
     presentation.show(df)
@@ -455,12 +439,18 @@ elif page == "📝 Conclusions & Future Steps":
     from page_modules import conclusions
     conclusions.show(df)
 
-# Footer
-# Footer
+# ==================== FOOTER ====================
 st.sidebar.markdown("---")
 st.sidebar.markdown("""
-<div style='text-align: center; color: #666; font-size: 0.75rem; margin-top: 20px;'>
-    <p style='margin: 5px 0;'>© 2024 Mediterranean Seagrass Project</p>
-    <p style='margin: 5px 0;'>Powered by Streamlit & Plotly</p>
+<div style='text-align: center; color: #666; font-size: 0.85rem; margin-top: 20px;'>
+    <p style='margin: 5px 0; font-weight: 500;'>Developed by Guillem La Casta</p>
+    <div style='margin-top: 10px;'>
+        <a href='https://www.linkedin.com/in/guillemlcg' target='_blank' style='margin: 0 8px; text-decoration: none;'>
+            <img src='https://cdn-icons-png.flaticon.com/512/174/174857.png' alt='LinkedIn' style='width: 28px; height: 28px; vertical-align: middle;'/>
+        </a>
+        <a href='https://github.com/guillemlcg' target='_blank' style='margin: 0 8px; text-decoration: none;'>
+            <img src='https://cdn-icons-png.flaticon.com/512/25/25231.png' alt='GitHub' style='width: 28px; height: 28px; vertical-align: middle;'/>
+        </a>
+    </div>
 </div>
 """, unsafe_allow_html=True)
